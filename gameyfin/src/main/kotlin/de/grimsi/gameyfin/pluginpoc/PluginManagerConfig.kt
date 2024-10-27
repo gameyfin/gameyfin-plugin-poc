@@ -4,6 +4,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.pf4j.DefaultPluginManager
 import org.pf4j.PluginManager
 import org.springframework.boot.context.event.ApplicationReadyEvent
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.event.EventListener
@@ -13,7 +14,7 @@ import kotlin.io.path.absolute
 
 @Configuration
 class PluginManagerConfig(
-    private val gameService: GameService
+    private val eventPublisher: ApplicationEventPublisher
 ) {
     private val log = KotlinLogging.logger {}
     val pluginsDir = System.getProperty("pf4j.pluginsDir", "./plugins")
@@ -29,10 +30,8 @@ class PluginManagerConfig(
         pluginManager().loadPlugins()
         pluginManager().startPlugins()
         log.info { "Loaded plugins: ${pluginManager().plugins.map { it.pluginId }}" }
-        val extensionPoints =
-            pluginManager().plugins.map { pluginManager().getExtensions(it.pluginId) }.flatten().toSet()
-        log.info { "Supported extension points by loaded plugins: $extensionPoints" }
-
-        gameService.demo()
+        val extensions = pluginManager().plugins.map { pluginManager().getExtensions(it.pluginId) }.flatten().toSet()
+        log.info { "Supported extensions by loaded plugins: $extensions" }
+        eventPublisher.publishEvent(PluginsLoadedEvent(this))
     }
 }
