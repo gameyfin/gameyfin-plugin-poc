@@ -35,4 +35,4 @@ tasks.named("build") {
     dependsOn(":gameyfin:uberJar")
 }
 
-extra.set("pluginsDir", rootProject.layout.buildDirectory.get().asFile.resolve("plugins"))
+extra.set("pluginsDir", rootProject.layout.buildDirectory.get().asFile.resolve("../packaged_plugins"))

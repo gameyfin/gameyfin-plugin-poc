@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    api("org.pf4j:pf4j:${pf4jVersion}")
+    implementation("org.pf4j:pf4j:${pf4jVersion}")
 }
 
 kotlin {

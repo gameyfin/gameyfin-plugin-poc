@@ -1,5 +1,8 @@
+import org.gradle.internal.extensions.core.extra
+
 group = "de.grimsi.gameyfin"
 version = "0.0.1-SNAPSHOT"
+val pf4jVersion: String by rootProject.extra
 val pluginsDir: File by rootProject.extra
 val appMainClass = "de.grimsi.gameyfin.PluginPocApplication"
 
@@ -29,9 +32,7 @@ repositories {
 
 dependencies {
     implementation(project(":plugin-api"))
-    implementation("org.pf4j:pf4j-spring:0.9.0") {
-        exclude(group = "org.slf4j")
-    }
+    api("org.pf4j:pf4j:${pf4jVersion}")
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.github.oshai:kotlin-logging-jvm:6.0.3")
@@ -52,6 +53,7 @@ tasks.named<JavaExec>("run") {
 }
 
 tasks.register<Jar>("uberJar") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     dependsOn(tasks.named("compileKotlin"))
     archiveClassifier.set("uber")
 

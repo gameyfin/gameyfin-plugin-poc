@@ -1,13 +1,15 @@
 package de.grimsi.gameyfin.pluginpoc
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.pf4j.spring.SpringPluginManager
+import org.pf4j.DefaultPluginManager
+import org.pf4j.PluginManager
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.event.EventListener
-import java.nio.file.Paths
+import java.nio.file.Path
 import kotlin.collections.map
+import kotlin.io.path.absolute
 
 @Configuration
 class PluginManagerConfig(
@@ -17,7 +19,10 @@ class PluginManagerConfig(
     val pluginsDir = System.getProperty("pf4j.pluginsDir", "./plugins")
 
     @Bean
-    fun pluginManager() = SpringPluginManager(listOf(Paths.get(pluginsDir)))
+    fun pluginManager(): PluginManager {
+        log.info { "Loading plugins from ${Path.of(pluginsDir).absolute()}" }
+        return DefaultPluginManager(Path.of(pluginsDir))
+    }
 
     @EventListener(ApplicationReadyEvent::class)
     fun loadPlugins() {
